@@ -2,6 +2,8 @@
 
 This forum is a web application that allows users to communicate, associate categories with posts, like/dislike posts & comments, and filter posts.
 
+![](frontend/static/assets/forum_image.png)
+
 ## Installation
 
 ```bash
