@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Literary-lions forum</title>
+    <link
+      rel="icon"
+      href="/static/assets/favicon_logo.png"
+      type="image/x-icon"
+    />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="nav__wrapper">
+        <a href="/">
+          <img class="nav__logo" src="static/assets/logo1.webp" alt="" />
+        </a>
+      </div>
+    </nav>
+    <section id="signup">
+      <div class="signup__container">
+        <div class="form_area">
+          <p class="title">SIGN UP</p>
+          <form action="/signup" method="POST" novalidate>
+            <div class="form_group">
+              <label class="sub_title" for="name">Username</label>
+              {{with .FieldErrors.name}}
+              <label class="error">{{.}}</label>
+              {{end}}
+              <input
+                name="name"
+                id="name"
+                placeholder="Enter your full name"
+                class="form_style"
+                type="text"
+              />
+            </div>
+            <div class="form_group">
+              <label class="sub_title" for="email">Email</label>
+              {{with .FieldErrors.email}}
+              <label class="error">{{.}}</label>
+              {{end}}
+              <input
+                name="email"
+                placeholder="Enter your email"
+                id="email"
+                class="form_style"
+                type="email"
+              />
+            </div>
+            <div class="form_group">
+              <label class="sub_title" for="password">Password</label>
+              {{with .FieldErrors.password}}
+              <label class="error">{{.}}</label>
+              {{end}}
+              <input
+                name="password"
+                placeholder="Enter your password"
+                id="password"
+                class="form_style"
+                type="password"
+              />
+            </div>
+            <div>
+              <button class="signup__btn">SIGN UP</button>
+              <p>
+                Have an Account? <a class="link" href="login">Login Here!</a>
+              </p>
+              <a class="link" href=""> </a>
+            </div>
+            <a class="link" href=""> </a>
+          </form>
+        </div>
+        <a class="link" href=""> </a>
+      </div>
+    </section>
+  </body>
+</html>

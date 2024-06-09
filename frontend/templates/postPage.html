@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Literary-lions forum</title>
+    <link
+      rel="icon"
+      href="/static/assets/favicon_logo.png"
+      type="image/x-icon"
+    />
+    <link rel="stylesheet"  href="/static/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/simplelightbox/dist/simple-lightbox.min.css" rel="stylesheet">
+
+    <base href="/" />
+</head>
+
+<body class="{{if .ShowModal}}body-no-scroll{{end}}">    
+      <nav>
+        <div class="nav__wrapper">
+          <div class="nav__logo--wrapper">
+            <a href="/">
+              <img class="nav__logo" src="/static/assets/logo1.webp" alt="" />
+            </a>
+            <form action="" method="" class="nav__form">
+              <input
+                class="nav__input"
+                type="text"
+                name="search"
+                placeholder="Search post"
+              />
+              <button class="nav__btn" type="submit">🔍</button>
+            </form>
+          </div>
+          <ul class="nav__list">
+            {{if not .IsAuthenticated}}
+            <li><a href="/login" class="nav__list--anchor">Log in</a></li>
+            <li>
+              <a
+                href="/signup"
+                class="nav__list--anchor nav__list--anchor--primary"
+                >Sign up</a
+              >
+            </li>
+            {{else}}
+            <li>
+              <a
+                href="/createPost"
+                class="nav__list--anchor nav__list--anchor--primary"
+                >Create Post</a
+              >
+            </li>
+            <li>
+              <a href="/profile/{{.UserID}}" class="nav__list--anchor"
+                >{{.User.Login}} <img src="/static/uploads/{{.User.ProfilePicturePath}}" alt=""
+              /></a>
+            </li>
+            {{end}}
+          </ul>
+        </div>
+      </nav>
+    <section id="postPage">
+        <div class="container">
+            <div class="row">
+                <div class="postPage__wrapper">
+                    <div class="postPage">
+                        <div class="post">
+                            <h2>{{.Post.Title}}</h2>
+                            <div class="post__content">
+
+                              <p class="post__para">
+                                {{.Post.Content}}
+                              </p>
+                            </div>
+                            <div class="post__mini--react post__mini--react--postPage">
+                                <span class="post__mini--btns">
+                                    {{if .IsAuthenticated}}
+                                     <a href="/postPage/{{.Post.ID}}/comment">
+                                    <button class="btn">Comment</button>
+                                       </a>
+                                        {{else}}
+                                         <a href="/login">
+                                          <button class="btn">Comment</button>
+                                             </a>
+                                          {{end}}
+                                </span>
+                                <span class="post__mini--info">
+                                  <form method="POST" action="/react" class="react__form">
+                                    <input type="hidden" name="reacting_user_id" value="{{.UserID}}">
+                                    <input type="hidden" name="post_id" value="{{.Post.ID}}">
+                                    <input type="hidden" name="type" value="post">
+                                    <button type="submit" name="action" value="like" {{ if not .IsAuthenticated}} disabled {{ end }}{{if .Post.HasLiked}}class="liked react__btn"{{else}}class="react__btn"{{end}}>
+                                        <img class="like" src="static/assets/like.png" alt="Like icon">
+                                        <p>
+                                          {{.Post.Likes}}
+                                        </p>
+                                    </button>
+                                    <button type="submit" name="action" value="dislike" {{ if not .IsAuthenticated}} disabled {{ end }} {{if .Post.HasDisliked}}class="disliked react__btn"{{else}}class="react__btn"{{end}}>
+                                        <img class="dislike" src="static/assets/dislike.png" alt="Dislike icon">
+                                        <p>
+                                          {{.Post.Dislikes}}
+                                        </p>
+                                    </button>
+                                </form>
+                                    <span><img class="like" src="static/assets/message.png" alt="" />
+                                        {{len .Post.Comments}}</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="post__comments--wrapper">
+                           {{if .Post.Comments}}
+                            <h3>Comments</h3>
+                            {{end}}
+                            {{ $isAuthenticated := .IsAuthenticated }}
+                            {{range .Post.Comments}}
+                            <div class="post__comment">
+                                <div class="post__comment--wrapper">
+                                    <div class="post__comment--user">
+                                      
+                                      <a href="/profile/{{.AuthorID}}">
+                                        <img src="static/uploads/{{.AuthorImage}}" alt="" />
+                                    </a>
+                                    <a href="/profile/{{.AuthorID}}">
+                                        <p>{{.AuthorName}}</p>
+                                      </a>
+                                    </div>
+                                    <p class="post__para">
+                                        {{.Content}}
+                                    </p>
+                                    <div class="post__mini--react post__mini--react--postPage">
+                                        <span class="post__mini--btns">
+                                            {{if $isAuthenticated}}
+                                              <a href="/postPage/{{.PostID}}/reply/{{.ID}}">
+                                              <button class="btn">Reply</button>
+                                              </a>
+                                            {{else}}
+                                              <a href="/login">
+                                                  <button class="btn">Reply</button>
+                                              </a>
+                                            {{end}}
+                                        </span>
+                                        <span class="post__mini--info">
+                                          <form method="POST" action="/react" class="react__form">
+                                            <input type="hidden" name="post_id" value="{{$.Post.ID}}">
+                                            <input type="hidden" name="reacting_user_id" value="{{$.UserID}}">
+                                            <input type="hidden" name="comment_id" value="{{.ID}}">
+                                            <input type="hidden" name="type" value="comment">
+                                            <button type="submit" name="action" value="like" {{ if not $.IsAuthenticated}} disabled {{ end }}{{if .HasLiked}}class="liked react__btn"{{else}}class="react__btn"{{end}}>
+                                                <img class="like" src="static/assets/like.png" alt="Like icon">
+                                               <p>{{.Likes}}</p>
+                                            </button>
+                                            <button type="submit" name="action" value="dislike" {{ if not $.IsAuthenticated}} disabled {{ end }}{{if .HasDisliked}}class="disliked react__btn"{{else}}class="react__btn"{{end}}>
+                                                <img class="dislike" src="static/assets/dislike.png" alt="Dislike icon">
+                                                <p>
+                                                  {{.Dislikes}}
+                                                </p>
+                                            </button>
+                                        </form>
+                                            <span><img class="like" src="static/assets/message.png" alt="" />
+                                                {{len .Replies}}</span>
+                                        </span>
+                                    </div>
+                                </div>
+                                {{range .Replies}}
+                                <div class="post__comment--reply">
+                                    <div class="post__comment--user">
+                                      <a href="/profile/{{.AuthorID}}">
+                                        <img src="static/uploads/{{.AuthorImage}}" alt="" />
+                                    </a>
+                                    <a href="/profile/{{.AuthorID}}">
+                                        <p>{{.AuthorName}}</p>
+                                      </a>
+                                    </div>
+                                    <p>{{.Content}}</p>
+                                </div>
+                                {{end}}
+                            </div>
+                            {{end}}
+
+                        </div>
+                    </div>
+                    <div class="profile__info">
+                      <span><strong>Post by:</strong></span>
+                      <a href="/profile/{{.Post.AuthorID}}">
+                          <img src="static/uploads/{{.Post.AuthorImage}}" alt="" class="profile__img">
+                          <div class="profile__info--details">
+                              <h2>{{.Post.AuthorName}}</h2>
+                              <p><strong>User since</strong> {{.UserSince}}</p>
+                              <p><strong>Total posts</strong> {{.PostCount}}</p>
+                          </div>
+                      </a>
+                      {{if .IsOwnPost}}
+                      <a href="/postPage/{{.Post.ID}}/delete">
+                          <button class="profile__btn" type="submit">Delete post</button>
+                      </a>
+                      {{end}}
+                  </div>
+                    </div>
+                </div>
+    </section>
+{{if .ShowModal}}
+<div class="modal" style="display:block;">
+  <div class="modal-content">
+    <span onclick="window.location.href='/postPage/{{.Post.ID}}'" class="close" style="cursor:pointer;">&times;</span>
+    <form action="/postPage/{{.Post.ID}}/{{if .ReplyTo}}reply/{{.ReplyTo}}{{else}}comment{{end}}" method="POST" class="modal__form">
+            <label for="comment" class="modal__label">Your Comment:</label>
+      <textarea id="comment" name="comment" required class="modal__input"></textarea>
+      <button onclick="insertImgTags(event)">Img</button>
+      <button class="btn modal__btn" type="submit">Submit</button>
+    </form>
+  </div>
+</div>
+{{end}}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simplelightbox/dist/simple-lightbox.jquery.min.js"></script>
+    <script>
+      $(document).ready(function() {
+          // Append unique query params to each image link and fix non-standard image URLs
+          $('a[data-lightbox="post-images"]').each(function(index) {
+              var originalHref = $(this).attr('href');
+  
+              // Check if the URL ends with a typical image extension
+              if (!/\.(jpg|jpeg|png|gif)$/i.test(originalHref)) {
+                  originalHref += '#.jpg'; // Append a hash and fake extension if no extension is present
+              }
+  
+              // Now append the unique parameter
+              $(this).attr('href', originalHref + '?unique=' + index);
+          });
+  
+          // Initialize Simple Lightbox
+          $('a[data-lightbox="post-images"]').simpleLightbox({
+              scrollZoom: false
+          });
+      });
+  </script>
+  
+</body>
+<script>
+  function insertImgTags(event) {
+      event.preventDefault(); // Prevent form submission
+      var textarea = document.getElementById('comment');
+      var cursorPos = textarea.selectionStart;
+      var content = textarea.value;
+      var imgTags = '[img][/img]';
+      var newContent = content.substring(0, cursorPos) + imgTags + content.substring(cursorPos);
+      textarea.value = newContent;
+  }
+</script>
+</html>

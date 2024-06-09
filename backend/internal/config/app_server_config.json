@@ -1,0 +1,4 @@
+{
+  "port_app": "3000",
+  "static_path": "../../frontend/static"
+}

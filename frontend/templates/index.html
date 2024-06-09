@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Literary-lions forum</title>
+    <link
+      rel="icon"
+      href="/static/assets/favicon_logo.png"
+      type="image/x-icon"
+    />
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/simplelightbox/dist/simple-lightbox.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <nav>
+      <div class="nav__wrapper">
+        <div class="nav__logo--wrapper">
+          <a href="/">
+            <img class="nav__logo" src="/static/assets/logo1.webp" alt="" />
+          </a>
+          <form action="/" method="get" class="nav__form">
+            <input
+              class="nav__input"
+              type="text"
+              name="search"
+              placeholder="Search post"
+            />
+            <button class="nav__btn" type="submit">🔍</button>
+          </form>
+        </div>
+        <ul class="nav__list">
+          {{if not .IsAuthenticated}}
+          <li><a href="/login" class="nav__list--anchor">Log in</a></li>
+          <li>
+            <a
+              href="/signup"
+              class="nav__list--anchor nav__list--anchor--primary"
+              >Sign up</a
+            >
+          </li>
+          {{else}}
+          <li>
+            <a
+              href="/createPost"
+              class="nav__list--anchor nav__list--anchor--primary"
+              >Create Post</a
+            >
+          </li>
+          <li>
+            <a href="/profile/{{.UserID}}" class="nav__list--anchor"
+              >{{.User.Login}}
+              <img src="/static/uploads/{{.User.ProfilePicturePath}}" alt=""
+            /></a>
+          </li>
+          {{end}}
+        </ul>
+      </div>
+    </nav>
+    <section id="landing">
+      <div class="container">
+        <div class="row">
+          <div class="landing__wrapper">
+            <aside>
+              <div class="sidebar__wrapper">
+                <ul class="sidebar__list">
+                  {{ range $category, $subcategories := .Categories}}
+                  <div class="sidebar__list--category">
+                    <h3>{{$category}}</h3>
+                    {{range $subcategories}}
+                    <li>
+                      <a
+                        class="sidebar__list--anchor"
+                        href="/subcategory/{{.ID}}"
+                        ><img
+                          class="sidebar__list--img"
+                          src="/static/assets/{{.IconPath}}"
+                          alt=""
+                        />{{.Title}}</a
+                      >
+                    </li>
+                    {{end}}
+                  </div>
+                  {{end}}
+                </ul>
+              </div>
+            </aside>
+            <div class="posts">
+              <form method="GET" action="" id="filter-form">
+                <select
+                  name="filter"
+                  id="filter"
+                  class="post__select"
+                  onchange="this.form.submit()"
+                >
+                  <option class="post__option" selected value="newest">
+                    Newest first
+                  </option>
+                  <option class="post__option" value="oldest">
+                    Oldest first
+                  </option>
+                  <option class="post__option" value="most_comments">
+                    Most Comments
+                  </option>
+                  <option class="post__option" value="most_likes">
+                    Most Likes
+                  </option>
+                  <option class="post__option" value="most_dislikes">
+                    Most Dislikes
+                  </option>
+                </select>
+              </form>
+
+              <div class="posts__wrapper">
+                {{range .Posts}}
+                <div class="post__mini">
+                  <div class="post__mini--creator">
+                    <span class="category__tag">✔️ {{.Subcategory.Title}}</span>
+                    <a href="/profile/{{.AuthorID}}">
+                      <img
+                        src="/static/uploads/{{.AuthorImage}}"
+                        alt="{{.AuthorName}}'s profile image"
+                      />
+                    </a>
+                    <div class="post__mini--creator--info">
+                      <a href="/profile/{{.AuthorID}}">
+                        <span>{{.AuthorName}}</span>
+                      </a>
+                      <span>{{.EventTimeAgo}}</span>
+                    </div>
+                  </div>
+                  <div class="post__mini--details">
+                    <a
+                      href="/postPage/{{.ID}}"
+                      class="post__mini--title--anchor"
+                    >
+                      <h3 class="post__mini--header">{{.Title}}</h3>
+                    </a>
+                    <p class="post__mini--para">{{.Content}}</p>
+                  </div>
+                  <div class="post__mini--react">
+                    <span class="post__mini--info">
+                      <span
+                        ><img
+                          class="like"
+                          src="/static/assets/like.png"
+                          alt=""
+                        />
+                        {{.Likes}}</span
+                      >
+                      <span
+                        ><img
+                          class="like"
+                          src="/static/assets/dislike.png"
+                          alt=""
+                        />{{.Dislikes}}</span
+                      >
+                      <span
+                        ><img
+                          class="like"
+                          src="/static/assets/message.png"
+                          alt=""
+                        />
+                        {{len .Comments}}</span
+                      >
+                    </span>
+                  </div>
+                </div>
+                {{end}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simplelightbox/dist/simple-lightbox.jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $('a[data-lightbox="post-images"]').simpleLightbox({
+          scrollZoom: false,
+        });
+      });
+    </script>
+    <script>
+      window.onload = function () {
+        var url = new URL(window.location.href);
+        var selectedFilter = url.searchParams.get("filter"); // Get the 'filter' query parameter
+        if (selectedFilter) {
+          var selectElement = document.getElementById("filter");
+          selectElement.value = selectedFilter; // Set the select element to match the parameter
+        }
+      };
+    </script>
+  </body>
+</html>

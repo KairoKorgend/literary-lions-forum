@@ -1,0 +1,11 @@
+services:
+  backend:
+    build: ./
+    container_name: forum
+    command: go run ./
+    volumes:
+      - ./backend:/app/backend
+      - ./frontend/static/uploads:/app/frontend/static/uploads
+    ports:
+      - "3000:3000"
+    restart: unless-stopped

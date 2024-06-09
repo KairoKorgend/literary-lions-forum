@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Literary-lions forum</title>
+    <link
+      rel="icon"
+      href="/static/assets/favicon_logo.png"
+      type="image/x-icon"
+    />
+    <link rel="stylesheet" href="/static/styles.css" />
+    <base href="/" />
+  </head>
+  <body>
+    <nav>
+      <div class="nav__wrapper">
+        <div class="nav__logo--wrapper">
+          <a href="/">
+            <img class="nav__logo" src="static/assets/logo1.webp" alt="" />
+          </a>
+          <form action="" method="" class="nav__form">
+            <input
+              class="nav__input"
+              type="text"
+              name="search"
+              placeholder="Search post"
+            />
+            <button class="nav__btn" type="submit">🔍</button>
+          </form>
+        </div>
+        <ul class="nav__list">
+          {{if not .IsAuthenticated}}
+          <li><a href="/login" class="nav__list--anchor">Log in</a></li>
+          <li>
+            <a
+              href="/signup"
+              class="nav__list--anchor nav__list--anchor--primary"
+              >Sign up</a
+            >
+          </li>
+        {{end}}
+        <ul class="nav__list">
+          {{ if and .IsAuthenticated .IsOwnProfile}}
+          <li>
+            <a
+              href="createPost"
+              class="nav__list--anchor nav__list--anchor--primary"
+              >Create Post</a
+            >
+          </li>
+          <li>
+            <form action="/logout" method="POST">
+              <button
+                class="nav__list--anchor nav__list--anchor--primary"
+                type="submit"
+              >
+                Logout
+              </button>
+            </form>
+          </li>
+          {{else if .IsAuthenticated}}
+          <li>
+            <a
+              href="createPost"
+              class="nav__list--anchor nav__list--anchor--primary"
+              >Create Post</a
+            >
+          </li>
+          <li>
+          <a href="/profile/{{.loggedInUserID}}" class="nav__list--anchor"
+          >My Profile
+          <img src="/static/uploads/{{.loggedInUserID}}.jpg" alt=""
+        /></a>
+        </li>
+          {{end}}
+        </ul>
+      </div>
+    </nav>
+    <section id="profile">
+      <div class="container">
+        <div class="row">
+          <div class="profile__wrapper">
+            {{ if .IsOwnProfile}}
+            <form action="/upload-image" method="post" class="profile__info" enctype="multipart/form-data">
+              <img
+                src="/static/uploads/{{.User.ProfilePicturePath}}"
+                alt=""
+                class="profile__img"
+              />
+              
+              <label class="profile__img--label" for=""
+                >Upload profile picture</label
+              >
+              <input
+                class="profile__img--input"
+                type="file"
+                name="profile-img"
+                placeholder="hello"
+                accept=".png,.jpg,.jpeg"
+              />
+              <div class="profile__info--details">
+                <h2>{{.User.Login}}</h2>
+                <p><strong>User since</strong> {{.User.CreatedAtFormatted}}</p>
+                <p><strong>Total posts</strong> {{.PostCount}}</p>
+              </div>
+              <button class="profile__btn" type="submit">Submit changes</button>
+              <a href="/profile/{{.User.ID}}/password" class="profile__btn"
+                >Change Password</a
+              >
+            </form>
+            {{else}}
+            <div class="profile__info">
+              <img
+                src="/static/uploads/{{.User.ProfilePicturePath}}"
+                alt=""
+                class="profile__img"
+              />
+              <div class="profile__info--details">
+                <h2>{{.User.Login}}</h2>
+                <p><strong>User since</strong> {{.User.CreatedAtFormatted}}</p>
+                <p><strong>Total posts</strong> {{.PostCount}}</p>
+              </div>
+            </div>
+            {{ end}}
+            <div class="profile__posts">
+              <div class="profile__posts--wrapper">
+                
+                {{if .IsOwnProfile}}
+                <div class="profile__options">
+                  <a href="/profile/{{.User.ID}}?tab=posts" class="{{if eq .ActiveTab "posts"}}active{{end}}">My Posts</a>
+    <a href="/profile/{{.User.ID}}?tab=liked" class="{{if eq .ActiveTab "liked"}}active{{end}}">Liked Posts</a>
+                </div>
+                {{end}}
+                <div class="profile__posts--posts">
+                  <div class="posts__wrapper">
+                    {{if eq .PostCount 0}}
+                      <p>User has no posts yet</p>
+                    {{else}}
+                    {{range .Posts}}
+                    <div class="post__mini">
+                      <div class="post__mini--creator">
+                        <span class="category__tag">✔️ {{.Subcategory.Title}}</span>
+                        <a href="profile/{{.AuthorID}}">
+                          <img src="/static/uploads/{{.AuthorImage}}" alt="{{.AuthorName}}'s profile image" />
+                        </a>
+                        <div class="post__mini--creator--info">
+                          <a href="/profile/{{.AuthorID}}">
+                            <span>{{.AuthorName}}</span>
+                          </a>
+                          <span>{{.EventTimeAgo}}</span>
+                        </div>
+                      </div>
+                      <div class="post__mini--details">
+                        <a href="/postPage/{{.ID}}">
+                          <h3 class="post__mini--header">
+                            {{.Title}}
+                          </h3>
+                        </a>
+                        <p class="post__mini--para">
+                          {{.Content}}
+                        </p>
+                      </div>
+                      <div class="post__mini--react">
+                        <span class="post__mini--info">
+                          <span
+                            ><img
+                              class="like"
+                              src="static/assets/like.png"
+                              alt=""
+                            />
+                            {{.Likes}}</span
+                          >
+                          <span
+                            ><img
+                              class="like"
+                              src="static/assets/dislike.png"
+                              alt=""
+                            />{{.Dislikes}}</span
+                          >
+                          <span
+                            ><img
+                              class="like"
+                              src="static/assets/message.png"
+                              alt=""
+                            />
+                            {{len .Comments}}</span
+                          >
+                        </span>
+                      </div>
+                    </div>
+                    {{end}}
+                    {{end}}
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script>
+      document.querySelector('.profile__info').addEventListener('submit', function(event) {
+        var imageInput = document.querySelector('.profile__img--input');
+        if (!imageInput.value) {
+          event.preventDefault();
+          alert('Please upload an image before submitting.');
+        }
+      });
+    </script>
+  </body>
+</html>

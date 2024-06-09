@@ -1,0 +1,16 @@
+# Dockerfile.test
+FROM golang:1.21.6
+
+WORKDIR /app/
+
+# Copy the entire project and the frontend directory into the Docker container
+COPY . .
+COPY frontend .
+
+# Set the working directory to match the original Dockerfile
+WORKDIR /app/backend/cmd
+
+# Run the test by specifying the full package path
+RUN go test -c -o app ../internal/api
+
+CMD ["./app"]

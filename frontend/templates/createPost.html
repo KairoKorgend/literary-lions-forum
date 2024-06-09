@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Literary-lions forum</title>
+    <link
+      rel="icon"
+      href="/static/assets/favicon_logo.png"
+      type="image/x-icon"
+    />
+    <link rel="stylesheet"  href="/static/styles.css">
+</head>
+<body>
+    <nav>
+        <div class="nav__wrapper">
+            <div class="nav__logo--wrapper">
+                <a href="/">
+
+                    <img class="nav__logo" src="/static/assets/logo1.webp" alt="" />
+                </a>
+                <form action="" method="" class="nav__form">
+                    <input
+                      class="nav__input"
+                      type="text"
+                      name="search"
+                      placeholder="Search post"
+                    />
+                    <button class="nav__btn" type="submit">🔍</button>
+                  </form>
+            </div>
+            <ul class="nav__list">
+                <li>
+                    <a href="/profile/{{.User.ID}}" class="nav__list--anchor">{{.User.Login}} <img src="/static/uploads/{{.User.ProfilePicturePath}}" alt="" /></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <section id="postPage">
+        <div class="container">
+            <div class="row">
+                <div class="postPage__wrapper">
+                    <div class="postPage">
+                        <form action="/createPost" method="POST" class="post post__form" novalidate>
+                            <select name="subcategory" id="subcategory" class="post__select" required>
+                                <option value="" selected disabled>Choose category</option>
+                                {{range $category, $subcats := .Categories}}
+                                    <optgroup label="{{$category}}">
+                                        {{range $subcats}}
+                                            <option value="{{.ID}}">{{.Title}}</option>
+                                        {{end}}
+                                    </optgroup>
+                                {{end}}
+                            </select>
+                            <textarea name="title" id="title" cols="40" rows="2" placeholder="Title here" class="form__header" required></textarea>
+                            <textarea name="content" id="content" cols="40" rows="10" placeholder="Main text here" class="form__para" required></textarea>
+                            <div class="form__btn--wrapper">
+                                <button class="submit__btn" onclick="insertImgTags(event)">add image</button>
+                                <button type="submit" id="createPostBtn" class="submit__btn" disabled>Create post </button>        
+                            </div>
+                        </form>
+                    </div>
+                    <div class="profile__info">
+                       <span><strong>Post by:</strong></span>
+                        <img src="/static/uploads/{{.User.ProfilePicturePath}}" alt="" class="profile__img">
+                        <div class="profile__info--details">
+                            <h2>{{.User.Login}}</h2>
+                        </div>
+                    </div>
+                </div>
+    </section>
+</body>
+<script>
+    document.getElementById("subcategory").addEventListener("change", function() {
+        var createPostBtn = document.getElementById("createPostBtn");
+        createPostBtn.disabled = this.value === "";
+    });
+
+    function insertImgTags(event) {
+        event.preventDefault(); // Prevent form submission
+        var textarea = document.getElementById('content');
+        var cursorPos = textarea.selectionStart;
+        var content = textarea.value;
+        var imgTags = '[img][/img]';
+        var newContent = content.substring(0, cursorPos) + imgTags + content.substring(cursorPos);
+        textarea.value = newContent;
+    }
+  </script>
+</html>

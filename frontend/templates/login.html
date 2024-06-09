@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Literary-lions forum</title>
+    <link
+      rel="icon"
+      href="/static/assets/favicon_logo.png"
+      type="image/x-icon"
+    />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="nav__wrapper">
+        <a href="/">
+          <img class="nav__logo" src="static/assets/logo1.webp" alt="" />
+        </a>
+      </div>
+    </nav>
+    <section id="signup">
+      <div class="signup__container">
+        <div class="form_area">
+          <p class="title">LOG IN</p>
+          <form action="/login" method="POST" novalidate>
+            <div class="form_group">
+              {{range .NonFieldErrors}}
+              <div class="error">{{.}}</div>
+              {{end}}
+              <label class="sub_title" for="email">Email</label>
+              {{with .FieldErrors.email}}
+              <label class="error">{{.}}</label>
+              {{end}}
+              <input
+                placeholder="Enter your email"
+                id="email"
+                name="email"
+                class="form_style"
+                type="email"
+                value="{{.Form.Email}}"
+              />
+            </div>
+            <div class="form_group">
+              <label class="sub_title" for="password">Password</label>
+              {{with .FieldErrors.password}}
+              <label class="error">{{.}}</label>
+              {{end}}
+              <input
+                placeholder="Enter your password"
+                id="password"
+                name="password"
+                class="form_style"
+                type="password"
+              />
+            </div>
+            <div>
+              <button class="signup__btn" value="Login">Log In</button>
+              <p>
+                Don't have an Account?
+                <a class="link" href="signup">Register Here!</a>
+              </p>
+              <a class="link" href=""> </a>
+            </div>
+            <a class="link" href=""> </a>
+          </form>
+        </div>
+        <a class="link" href=""> </a>
+      </div>
+    </section>
+  </body>
+</html>
