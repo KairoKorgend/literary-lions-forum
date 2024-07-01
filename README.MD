@@ -7,7 +7,7 @@ This forum is a web application that allows users to communicate, associate cate
 ## Installation
 
 ```bash
-git clone https://gitea.kood.tech/kristenkuldmaa/literary-lions.git
+git clone https://github.com/KairoKorgend/literary-lions-forum.git
 ```
 
 ## Installing packages
